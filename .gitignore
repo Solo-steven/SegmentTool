@@ -1,2 +1,3 @@
 ## 忽略python的暫存檔
 */__pycache__
+__pycache__

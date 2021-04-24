@@ -106,12 +106,15 @@ class WordNet:
 
     """   原子分詞
          1. 目的 ： 保證句子的連通性，即保證每一個vertex都存在一個path到EOS的節點。
-         2. 方法 ： 遞迴表示狀態轉移，當此index開始的字串為0個的時候，將當前index的字加入
-                   WordNet中，並移動到下一個字的狀態。    
+         2. 方法 ： 遞迴表示狀態轉移，當此index開始的字串為0個的時候，由當前的index
+                   開始尋找下一個不為空詞的index，並新增那段詞。    
     """
     def __atomic_Segment(self, index=0):
         if len(self.__vertexTable[index]) == 0:
-            word = self.__word[index-1:index]
+            toIndex = index 
+            while  len(self.__vertexTable[toIndex]) == 0 :
+                toIndex+=1 
+            word = self.__word[index-1:toIndex-1]
             self.__vertexTable[index].append(Vertex(word, index))
         if self.__vertexTable[index][0].word == "EOS":
             return 
@@ -146,7 +149,7 @@ class WordNet:
         uConst  = 1-(1/ totalTime + 0.00001)
         return - math.log( sConst*(uConst*(twoGramFrequency/frequency)+(1-uConst)) + (1-uConst)*((frequency+1)/totalTime) )
 
-    """   建構Edge Table 
+    """   建構Edge Table (後記二)
          1. 目的 ： 類似Vertex Table的方法。建構一個長度為n的list，每一個index代表由此下標開始的二元連詞。
          2. 方法 ： DFS。每次拜訪一個節點時，任意選一個子點，計算邊，再拜訪那個子點。直到子點都被拜訪。
     """
@@ -232,4 +235,10 @@ class WordNet:
             (1) 求子節點: 當前index直接加上字串的長度，例如『測試』的子節點，就是index + len(測試) = 1 + 2 = 3，
                          就是Table中為index=3的所有節點，即『的』字。
             (2) 求父節點: 同理，只是用減的而已。 
+    三. 要注意的事：
+         
+"""
+
+"""   後記二 ： 邊的資料結構
+
 """

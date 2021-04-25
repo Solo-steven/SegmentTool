@@ -1,12 +1,12 @@
 from Dictionary.Dictionary import Dictionary 
-from WordNet.WordNet_v_1_1 import WordNet
+from WordNet.WordNet import WordNet
 
 if __name__ == '__main__':
     word = WordNet(Dictionary())
     while 1:
         try: 
             print("=================================")
-            string = input("請輸入句子(輸入end結束):")
+            string = input("請輸入句子(輸入end結束整個程式):")
             if string == "end" :
                 exit()   
             word.build_Word_Net(string)  

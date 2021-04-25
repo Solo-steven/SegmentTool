@@ -45,13 +45,13 @@ class WordNet:
         self.__edgeTable   = None
         if word is not None:
             self.build_Word_Net(word)
-    """   印出經過圖行計算之後，最有可能的分詞組成   """
+    """   介面   """
     def print_Sentence(self):
         for i in range(1,len(self.__sentence)):
             print(self.__sentence[len(self.__sentence)-1-i],end=" ")
         print("")
 
-    """   印出經過圖行計算中，所運用到的任何紀錄    """
+    """   介面   """
     def print_Net_Data(self):
         print("Vertex Table : ")
         for  i in range(len(self.__vertexTable)):
@@ -72,7 +72,7 @@ class WordNet:
                 print(vertex.predecessor, vertex.cost ,end=",")
             print("")   
 
-    """   建構一個新的詞網並分析 
+    """   介面
          1. 目的 ： 根據一個新輸入的詞，重新建構WordNet的相關資訊。
          2. 方法 ： 建構節點table -> 建構邊table -> 計算最短路徑 -> 找出最短路徑
     """        
@@ -104,8 +104,8 @@ class WordNet:
             return 0
         return len(word)   
 
-    """   原子分詞
-         1. 目的 ： 保證句子的連通性，即保證每一個vertex都存在一個path到EOS的節點。
+    """   建構Vertex Table
+         1. 目的 ： 原子分詞，保證句子的連通性，即保證每一個vertex都存在一個path到EOS的節點。
          2. 方法 ： 遞迴表示狀態轉移，當此index開始的字串為0個的時候，由當前的index
                    開始尋找下一個不為空詞的index，並新增那段詞。    
     """
@@ -136,7 +136,7 @@ class WordNet:
                     self.__vertexTable[index].append(Vertex(word,index))
         self.__atomic_Segment()  
 
-    """   計算兩個節點的邊權重
+    """   建構Edge Table 
          1. 目的 ： 由公式和字典中的二元詞頻，計算兩個節點相連的權重。
          2. 方法 ： 使用一元詞頻平滑二元詞頻的公式。  
     """
@@ -162,13 +162,13 @@ class WordNet:
                     weight = self.__calcul_Weight(beginVertex.word, toVertex.word)
                     self.__edgeTable[beginVertex.index].append(Edge(beginVertex.word+"#"+toVertex.word, beginVertex.index, weight))
                     self.__build_Edge_Table(toVertex.index, record)
-
+    """   建構最短路徑   """
     def __find_Edge(self, beginWord, toWord, index):
         twoGram = beginWord+"#"+toWord;
         for edge in self.__edgeTable[index]:
             if edge.word == twoGram :
                 return edge.weight
-    """   建構最短路徑的資訓
+    """   建構最短路徑
          1. 目的 ： 根據建構好的節點和邊的權重，建構行程最短路徑的資訊。
          2. 方法 ： 使用dijkstra建構最短路徑的DP info。 
     """
@@ -193,7 +193,7 @@ class WordNet:
             else: 
                 return 
 
-    """   根據dijkstra的資訊找出最短路徑
+    """   找出最短路徑
          1. 目的 ： 找出最短路徑，即代表最有可能的分詞組成。
          2. 方法 ： 由EOS向前尋找predecessor。
     """
